@@ -1,11 +1,14 @@
-import React from 'react';
+import Combobox from "./Components/Combobox";
+import FildMapping from "./Components/FildMapping";
+import Header from "./Components/Header";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-      </header>
-      <div className="flex w-full h-full bg-red-300">123</div>
+    <div className="max-w-[550px] mx-auto">
+      <Header />
+      <Combobox />
+      <FildMapping />
+
     </div>
   );
 }

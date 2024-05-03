@@ -1,6 +1,6 @@
-# Getting Started with Create React App
+# Yandex Metric - S2 integration
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Интеграция для передачи данных из Я.Метрики в СРМ S2
 
 ## Available Scripts
 
