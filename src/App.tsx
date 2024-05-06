@@ -3,7 +3,7 @@ import Header from "./Components/Header";
 
 function App() {
   return (
-    <div className="max-w-[550px] mx-auto">
+    <div className="max-w-[550px] mx-auto text-[#484848]">
       <Header />
       <MappingWrapper />
 
