@@ -9,7 +9,7 @@ import { Context } from "../../context-provider";
 
 export default function FildMapping() {
 
-  const { contactFields, companyFields, yandexToken, metricId } = useContext(Context);
+  const { contactFields, companyFields, yandexToken, metricId, address, rules, setRules } = useContext(Context);
 
   interface Fields {
     yandexField: Item
@@ -21,13 +21,47 @@ export default function FildMapping() {
   const [contactClientID, setContactClientId] = useState<Item>({ name: "" })
   const [companiesClientID, setCompaniesClientId] = useState<Item>({ name: "" })
 
+  // const [contactsSelectedFields, setContactsSelectedFields] = useState<Fields[]>([
+  //   {
+  //     "yandexField": {
+  //       "attribute-name": "ym:s:windowClientWidth",
+  //       "name": "Ширина окна"
+  //     },
+  //     "crmField": {
+  //       "attribute-name": "utm-source",
+  //       "name": "UTM Рекламная система"
+  //     }
+  //   },
+  //   {
+  //     "yandexField": {
+  //       "attribute-name": "ym:s:windowClientHeight",
+  //       "name": "Высота окна"
+  //     },
+  //     "crmField": {
+  //       "attribute-name": "utm-medium",
+  //       "name": "UTM Тип трафика"
+  //     }
+  //   }
+  // ])
+
   const [contactsSelectedFields, setContactsSelectedFields] = useState<Fields[]>([])
   const [companiesSelectedFields, setCompaniesSelectedFields] = useState<Fields[]>([])
 
-  const [rules, setRules] = useState<any>(null);
+  // const [rules, setRules] = useState<any>(null);
   const [result, setRusult] = useState<any>(null);
 
-  const [clientID, setClientID] = useState("1713166098593675470");
+  useEffect(() => {
+
+    // if (rules) setContactsSelectedFields(rules.contactRules.map((e) => e.params))
+    //console.log(rules)
+    if (rules && rules?.contactRules?.length) {
+      // console.log(rules.contactRules.map((e: any) => e.params), "VVVVV")
+      // let _contactRules = [];
+      // const _rul = rules.contactRules.map((e: any) => e.params) as any;
+      // const _rul2 = _rul.map((e: any) => [...e])
+      console.log(rules?.contactRules)
+    }
+  }, [rules])
 
   useEffect((): any => {
 
@@ -54,30 +88,33 @@ export default function FildMapping() {
       }))
 
 
-    setRules(JSON.stringify({ contactRules, companyRules }))
+    // setRules(JSON.stringify({ contactRules, companyRules }))
 
     const someCode = `
-    const metricId = "${metricId}";
-    const auth0 = "${yandexToken}";
+    const metricId = /*metricId*/"${metricId}"/*endMetricId*/;;
+    const auth0 = /*auth0*/"${yandexToken}"/*endAuth0*/;
     const rules = /*rules*/${rules}/*endRules*/;
-    if (request.type != "Contact" && request.type != "Company") {throw new Error("Ожидается хук с Контактом или Компанией")};
-    if (request.type == "Contact") {
-      if (!rules.contactRules.length) {throw new Error("Не удалось найти правила для Контактов")};
-      for (let i=0;i<rules.contactRules.length;i++) {
-          const dimensions = rules.contactRules[i].params.map(e=>e.yandexField["attribute-name"]).join(",");
-          const url = "https://api-metrika.yandex.net/stat/v1/data?ids="+metricId+"&dimensions="+dimensions+"&filters=ym:s:clientID==${clientID}&metrics="+rules.contactRules[i].metric;
-          const res = axios.get(url, {headers: {Authorization: "OAuth ${yandexToken}"}})
-          if (!res.data?.length) {throw new Error("Нет данных для записи" + JSON.stringify(res))}
-          for (let x = 0; x < rules.contactRules[i].params.length; x++) {
-            newData.attributes[rules.contactRules[i].params[x].crmField["attribute-name"]] = res.data[0].dimensions[x].name;
-          }
-          newData.type = "contacts";
-          //await axios.patch("https://app.salesap.ru/contacts/"+data.id,options);
-          console.log(newData)
-
-      }      
-    }
     
+    if (request.type != "Contact" && request.type != "Company") { throw new Error("Ожидается хук с Контактом или Компанией") };
+    if (request.type == "Contact") {
+      newData.type = "contacts";
+      if (!rules.contactRules.length) { throw new Error("Не удалось найти правила для Контактов") };
+      for (let i = 0; i < rules.contactRules.length; i++) {
+        const clientId = data[rules.contactRules[i].clientId["attribute-name"]].replace(/<(.|\n)*?>/g, '');
+        if (!clientId) {throw new Error ("Не указан ClientID")}
+        const dimensions = rules.contactRules[i].params.map(e => e.yandexField["attribute-name"]).join(",");
+        const url = "https://api-metrika.yandex.net/stat/v1/data?ids=" + metricId + "&dimensions=" + dimensions + "&filters=ym:s:clientID=="+clientId+"&metrics=" + rules.contactRules[i].metric;
+        const res = await axios.get(url, { headers: { Authorization: "OAuth " + auth0 } })
+        if (!res.data.data?.length) { throw new Error("Нет данных для записи" + JSON.stringify(res.data)) }
+          for (let x = 0; x < rules.contactRules[i].params.length; x++) {
+            if (rules.contactRules[i].params[x].crmField["attribute-name"].includes("custom")) {
+              newData.attributes.customs[rules.contactRules[i].params[x].crmField["attribute-name"]]
+              } else { newData.attributes[rules.contactRules[i].params[x].crmField["attribute-name"]] = res.data.data[0].dimensions[x].name; }
+          }
+          await axios.patch("${address}/"+data.id, {data: newData}, options);
+        }
+      return;
+    }
   `
 
     setRusult(someCode)
@@ -85,7 +122,9 @@ export default function FildMapping() {
   }, [contactsSelectedFields, companiesSelectedFields, contactClientID, companiesClientID])
 
   return (<div>
-    <input value={clientID} onChange={e => setClientID(e.target.value)} />
+    <pre>
+      {/* {JSON.stringify(rules, null, 2)} */}
+    </pre>
     <div className="rounded border relative p-2">
       <h2 className=" absolute bg-white top-[-12px] left-[8px] text-sm">Получение данных</h2>
       <div>
