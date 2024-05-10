@@ -11,12 +11,11 @@
 
 <body>
 
-  <h2>Скопируйте следующий токен и вставьте его в настройки</h2>
-  <div id="token" style="margin-top: 20px"></div>
+  <div>Скопируйте следующий токен и вставьте его в настройки</div>
+  <input id="token" style="margin-top: 20px; border: none; border-bottom: solid 1px #ddd; padding: 5px; display: block;" />
   <script>
-    // https://vs113.ru/workshop/yandexmetrika/yandex.html#access_token=y0_AgAEA7qj6qHpAAuXoQAAAAEEZMaRAACIOkZIPZxNPp878G7y9HCZ7AcL6w&token_type=bearer&expires_in=31498918&cid=8hwvjvy7uph3wn0ttxgcunbkew
     const url = new URL(window.location.href.replace("#", "?"))
-    const yandexToken = x.searchParams.get("access_token")
+    const yandexToken = url.searchParams.get("access_token")
     document.querySelector("#token").textContent = yandexToken;
   </script>
 
