@@ -31,23 +31,25 @@
   <noscript>You need to enable JavaScript to run this app.</noscript>
   <div id="root"></div>
   <script>
-    YaAuthSuggest.init(
-      {
-        client_id: 'ba1591d5cde243f5864b6340ddfb58ac',
-        response_type: 'token',
-        redirect_uri: 'https://sivko.github.io/yandex-metric-s2.github.io/build/yandex.html'
-      },
-      'https://sivko.github.io/yandex-metric-s2.github.io/build/'
-    )
-      .then(({
-        handler
-      }) => handler())
-      .then(data => {
-        console.log('Сообщение с токеном', data)
-        document.querySelector("#yatoken").value = data.access_token
-      })
-      .catch(error => console.log('Обработка ошибки', error));
+    window.onload = function () {
 
+      YaAuthSuggest.init(
+        {
+          client_id: 'ba1591d5cde243f5864b6340ddfb58ac',
+          response_type: 'token',
+          redirect_uri: 'https://sivko.github.io/yandex-metric-s2.github.io/build/yandex.html'
+        },
+        'https://sivko.github.io/yandex-metric-s2.github.io/build/'
+      )
+        .then(({
+          handler
+        }) => handler())
+        .then(data => {
+          console.log('Сообщение с токеном', data)
+          document.querySelector("#yatoken").value = data.access_token
+        })
+        .catch(error => console.log('Обработка ошибки', error));
+    }
   </script>
   <!--
       This HTML file is a template.
