@@ -31,28 +31,20 @@
   <noscript>You need to enable JavaScript to run this app.</noscript>
   <div id="root"></div>
   <script>
-    const tokenPageOrigin = "";
-    const oauthQueryParams = {
-      client_id: 'ba1591d5cde243f5864b6340ddfb58ac',
-      response_type: 'token',
-      // redirect_uri: 'https://examplesite.com/suggest/token'
-    }
-    window.YaAuthSuggest.init(
-      oauthQueryParams,
-      tokenPageOrigin,
+    YaAuthSuggest.init(
       {
-        view: "button",
-        parentId: "buttonYandexAuth",
-        buttonSize: 'm',
-        buttonView: 'main',
-        buttonTheme: 'light',
-        buttonBorderRadius: "0",
-        buttonIcon: 'ya',
-      }
+        client_id: 'ba1591d5cde243f5864b6340ddfb58ac',
+        response_type: 'token',
+        redirect_uri: 'https://sivko.github.io/yandex-metric-s2.github.io/build/yandex.html'
+      },
+      'https://examplesite.com'
     )
-      .then(({ handler }) => handler())
+      .then(({
+        handler
+      }) => handler())
       .then(data => console.log('Сообщение с токеном', data))
-      .catch(error => console.log('Обработка ошибки', error))
+      .catch(error => console.log('Обработка ошибки', error));
+
   </script>
   <!--
       This HTML file is a template.
