@@ -3,63 +3,38 @@ import Combobox, { Item } from "../../Components/Combobox";
 import { useContext, useEffect, useState } from "react";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { yandexGroupFields } from "../../fields/yandexGroup";
-// import { defaultCompaniesFields } from "../../fields/defaultCompanies";
-// import { defaultContactFields } from "../../fields/defaultContacts";
 import { Context } from "../../context-provider";
+
+const metrics = ["ym:s:visits", "ym:pv:pageviews", "ym:ad:visits", "ym:up:params", "ym:ev:expenseClicks"];
+
 
 export default function FildMapping() {
 
-  const { contactFields, companyFields, yandexToken, metricId, address, rules, setRules } = useContext(Context);
+  const { contactFields, companyFields, yandexToken, metricId, address, rules, setRules, contactClientID, setContactClientId, companiesClientID, setCompaniesClientId, result, setRusult } = useContext(Context);
 
   interface Fields {
     yandexField: Item
     crmField: Item
   }
 
-  const metrics = ["ym:s:visits", "ym:pv:pageviews", "ym:ad:visits", "ym:up:params", "ym:ev:expenseClicks"];
-
-  const [contactClientID, setContactClientId] = useState<Item>({ name: "" })
-  const [companiesClientID, setCompaniesClientId] = useState<Item>({ name: "" })
-
-  // const [contactsSelectedFields, setContactsSelectedFields] = useState<Fields[]>([
-  //   {
-  //     "yandexField": {
-  //       "attribute-name": "ym:s:windowClientWidth",
-  //       "name": "Ширина окна"
-  //     },
-  //     "crmField": {
-  //       "attribute-name": "utm-source",
-  //       "name": "UTM Рекламная система"
-  //     }
-  //   },
-  //   {
-  //     "yandexField": {
-  //       "attribute-name": "ym:s:windowClientHeight",
-  //       "name": "Высота окна"
-  //     },
-  //     "crmField": {
-  //       "attribute-name": "utm-medium",
-  //       "name": "UTM Тип трафика"
-  //     }
-  //   }
-  // ])
-
   const [contactsSelectedFields, setContactsSelectedFields] = useState<Fields[]>([])
   const [companiesSelectedFields, setCompaniesSelectedFields] = useState<Fields[]>([])
 
-  // const [rules, setRules] = useState<any>(null);
-  const [result, setRusult] = useState<any>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+
 
   useEffect(() => {
 
-    // if (rules) setContactsSelectedFields(rules.contactRules.map((e) => e.params))
-    //console.log(rules)
     if (rules && rules?.contactRules?.length) {
-      // console.log(rules.contactRules.map((e: any) => e.params), "VVVVV")
-      // let _contactRules = [];
-      // const _rul = rules.contactRules.map((e: any) => e.params) as any;
-      // const _rul2 = _rul.map((e: any) => [...e])
-      console.log(rules?.contactRules)
+      setContactsSelectedFields([].concat.apply([], rules?.contactRules.map((e: any) => e.params)))
+      setCompaniesSelectedFields([].concat.apply([], rules?.companyRules.map((e: any) => e.params)))
+
+      console.log(rules.contactRules[0].clientId)
+      setContactClientId(rules.contactRules[0].clientId)
+    }
+
+    if (rules && rules?.companyRules?.length) {
+      rules.companiesClientID[0] &&setCompaniesClientId(rules.companiesClientID[0].clientId)
     }
   }, [rules])
 
@@ -88,7 +63,7 @@ export default function FildMapping() {
       }))
 
 
-    // setRules(JSON.stringify({ contactRules, companyRules }))
+    setRules(JSON.stringify({ contactRules, companyRules }))
 
     const someCode = `
     const metricId = /*metricId*/"${metricId}"/*endMetricId*/;;
@@ -103,7 +78,7 @@ export default function FildMapping() {
         const clientId = data[rules.contactRules[i].clientId["attribute-name"]].replace(/<(.|\n)*?>/g, '');
         if (!clientId) {throw new Error ("Не указан ClientID")}
         const dimensions = rules.contactRules[i].params.map(e => e.yandexField["attribute-name"]).join(",");
-        const url = "https://api-metrika.yandex.net/stat/v1/data?ids=" + metricId + "&dimensions=" + dimensions + "&filters=ym:s:clientID=="+clientId+"&metrics=" + rules.contactRules[i].metric;
+        const url = "https://api-metrika.yandex.net/stat/v1/data?ids=" + metricId + "&dimensions=" + dimensions + "&filters=ym:s:clientID=="+clientId+"&metrics=" + rules.contactRules[i].metric+"&date1="+moment(data.created_at).format("YYYY-MM-DD");
         const res = await axios.get(url, { headers: { Authorization: "OAuth " + auth0 } })
         if (!res.data.data?.length) { throw new Error("Нет данных для записи" + JSON.stringify(res.data)) }
           for (let x = 0; x < rules.contactRules[i].params.length; x++) {
@@ -119,12 +94,9 @@ export default function FildMapping() {
 
     setRusult(someCode)
 
-  }, [contactsSelectedFields, companiesSelectedFields, contactClientID, companiesClientID])
+  }, [contactsSelectedFields, companiesSelectedFields, contactClientID, companiesClientID, setRules, metricId, yandexToken, rules, address, metrics])
 
   return (<div>
-    <pre>
-      {/* {JSON.stringify(rules, null, 2)} */}
-    </pre>
     <div className="rounded border relative p-2">
       <h2 className=" absolute bg-white top-[-12px] left-[8px] text-sm">Получение данных</h2>
       <div>
@@ -135,7 +107,7 @@ export default function FildMapping() {
           </button>
         </div>
         <div className="mt-2 flex flex-col gap-2">
-          <Combobox placeholder="Поле с ClientID" items={contactFields} item={contactClientID} setItem={setContactClientId} />
+          <Combobox key={contactClientID.name} placeholder="Поле с ClientID" items={contactFields} item={contactClientID} setItem={setContactClientId} />
 
           {contactsSelectedFields.map((item, index) => (<div key={`combo_${index}`} className="flex gap-2 flex-1 w-full">
             <Combobox placeholder="Поле в СРМ" item={item.crmField} items={contactFields} setItem={(_item: Item) => setContactsSelectedFields((prev) => { let items = prev; contactsSelectedFields[index].crmField = _item; return [...items] })} />
@@ -154,7 +126,7 @@ export default function FildMapping() {
           </button>
         </div>
         <div className="mt-2 flex flex-col gap-2">
-          <Combobox placeholder="Поле с ClientID" items={companyFields} item={companiesClientID} setItem={setCompaniesClientId} />
+          <Combobox key={companiesClientID.name} placeholder="Поле с ClientID" items={companyFields} item={companiesClientID} setItem={setCompaniesClientId} />
 
           {companiesSelectedFields.map((item, index) => (<div key={`combo2_${index}`} className="flex gap-2 flex-1 w-full">
             <Combobox placeholder="Поле в СРМ" item={item.crmField} items={companyFields} setItem={(_item: Item) => setCompaniesSelectedFields((prev) => { let items = prev; companiesSelectedFields[index].crmField = _item; return [...items] })} />
@@ -165,8 +137,12 @@ export default function FildMapping() {
         </div>
       </div>
     </div>
-    <pre className="text-[10px] leading-[10px]">
+
+    <div className="flex items justify-end">
+      <div className="w-[12px] h-[12px] cursor-pointer" onClick={() => setIsAdmin(prev => !prev)} />
+    </div>
+    {isAdmin && <pre className="text-[10px] leading-[10px]" key={"CODE"}>
       {result}
-    </pre>
+    </pre>}
   </div>)
 }

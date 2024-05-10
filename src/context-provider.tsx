@@ -1,4 +1,3 @@
-import ky from "ky"
 import React, { SetStateAction, createContext, useEffect, useState } from "react"
 import { TokenRootInterface } from "./types/token"
 import { UserRootInterface } from "./types/user"
@@ -78,28 +77,41 @@ async function init({ setAccount, setAddress, setToken, setOptions, setContactFi
   console.log("Беру константу", getRules.id)
   setConstId(getRules.id)
 
-  const regMetricId = /\/\*metricId\*\/(.*)\/\*endMetricId\*\//s;
-  const regYandexToken = /\/\*auth0\*\/(.*)\/\*endAuth0\*\//s;
-  const regRules = /\/\*rules\*\/(.*)\/\*endRules\*\//s;
 
-  //@ts-ignore
-  console.log("Устанавливаю Токен Яндекс", getRules.attributes.value.match(regYandexToken)[1])
-  //@ts-ignore
-  console.log("Устанавливаю MetrikID", getRules.attributes.value.match(regMetricId)[1])
-  //@ts-ignore
-  console.log("Маппинг полей", JSON.parse(getRules.attributes.value.match(regRules)[1]))
 
-  //@ts-ignore
-  setYandexToken(getRules.attributes.value.match(regYandexToken)?.length ? getRules.attributes.value.match(regYandexToken)[1].replaceAll('"', '') : "");
-  //@ts-ignore
-  setMetricId(getRules.attributes.value.match(regMetricId)?.length ? getRules.attributes.value.match(regMetricId)[1].replaceAll('"', '') : "");
+  const _customFieldsContacts = await axios.get(`${addr}/api/v1/custom-fields?filter[field-type]=text,select&filter[resources]=contacts`, _options)
+  const customFieldsContacts = _customFieldsContacts.data.data.map((e: any) => ({ "attribute-name": `custom_${e.id}`, name: `${e.attributes.name}*` }))
 
-  //@ts-ignore
-  setRules(getRules.attributes.value.match(regRules)?.length ? JSON.parse(getRules.attributes.value.match(regRules)[1]) : "")
 
-  setCompanyFields(defaultCompaniesFields)
-  setContactFields(defaultContactFields)
+  const _customFieldsCompanies = await axios.get(`${addr}/api/v1/custom-fields?filter[field-type]=text,select&filter[resources]=companies`, _options)
+  const customFieldsCompanies = _customFieldsCompanies.data.data.map((e: any) => ({ "attribute-name": `custom_${e.id}`, name: `${e.attributes.name}*` }))
 
+
+  setCompanyFields([...defaultCompaniesFields, ...customFieldsContacts])
+  setContactFields([...defaultContactFields, ...customFieldsCompanies])
+
+  try {
+    const regMetricId = /\/\*metricId\*\/(.*)\/\*endMetricId\*\//s;
+    const regYandexToken = /\/\*auth0\*\/(.*)\/\*endAuth0\*\//s;
+    const regRules = /\/\*rules\*\/(.*)\/\*endRules\*\//s;
+
+    //@ts-ignore
+    console.log("Устанавливаю Токен Яндекс", getRules.attributes.value.match(regYandexToken)[1])
+    //@ts-ignore
+    console.log("Устанавливаю MetrikID", getRules.attributes.value.match(regMetricId)[1])
+    //@ts-ignore
+    console.log("Маппинг полей", JSON.parse(getRules.attributes.value.match(regRules)[1]))
+
+    //@ts-ignore
+    setYandexToken(getRules.attributes.value.match(regYandexToken)?.length ? getRules.attributes.value.match(regYandexToken)[1].replaceAll('"', '') : "");
+    //@ts-ignore
+    setMetricId(getRules.attributes.value.match(regMetricId)?.length ? getRules.attributes.value.match(regMetricId)[1].replaceAll('"', '') : "");
+
+    //@ts-ignore
+    setRules(getRules.attributes.value.match(regRules)?.length ? JSON.parse(getRules.attributes.value.match(regRules)[1]) : "")
+
+
+  } catch (err) { console.log(err) }
 
 }
 
@@ -113,6 +125,11 @@ function ContextProvider({ children }: Readonly<{ children: React.ReactNode; }>)
   const [companyFields, setCompanyFields] = useState<Item>()
   const [metricId, setMetricId] = useState("")
   const [rules, setRules] = useState<any>(null);
+  const [contactClientID, setContactClientId] = useState<Item>({ name: "" })
+  const [companiesClientID, setCompaniesClientId] = useState<Item>({ name: "" })
+  const [modals, setModals] = useState<any[]>([])
+  const [result, setRusult] = useState<any>(null);
+
 
   const [constId, setConstId] = useState("")
 
@@ -120,7 +137,7 @@ function ContextProvider({ children }: Readonly<{ children: React.ReactNode; }>)
     init({ setAccount, setToken, setAddress, setOptions, setContactFields, setCompanyFields, setMetricId, setConstId, setYandexToken, setRules })
   }, [])
 
-  return <Context.Provider value={{ account, setAccount, address, token, setAddress, setToken, options, yandexToken, setYandexToken, contactFields, companyFields, metricId, setMetricId, constId, setConstId, rules, setRules }}>
+  return <Context.Provider value={{ account, setAccount, address, token, setAddress, setToken, options, yandexToken, setYandexToken, contactFields, companyFields, metricId, setMetricId, constId, setConstId, rules, setRules, contactClientID, setContactClientId, companiesClientID, setCompaniesClientId, result, setRusult, modals, setModals }}>
     {children}
   </Context.Provider>
 }

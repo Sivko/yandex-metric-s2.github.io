@@ -1,13 +1,15 @@
 import MappingWrapper from "./Components/MappingWrapper";
 import Header from "./Components/Header";
+import Save from "./Components/Save";
+import Modals from "./Components/Modals";
 
 function App() {
   return (
     <div className="max-w-[550px] mx-auto text-[#484848]">
+      <Modals />
       <Header />
       <MappingWrapper />
-
-      <button className="bg-yellow-200 text-center rounded py-2 px-2 w-full mt-4">Сохранить</button>
+      <Save />
     </div>
   );
 }
