@@ -12,11 +12,11 @@
 <body>
 
   <div>Скопируйте следующий токен и вставьте его в настройки</div>
-  <input id="token" style="margin-top: 20px; border: none; border-bottom: solid 1px #ddd; padding: 5px; display: block;" />
+  <input id="token" style="margin-top: 20px;width: 100%; border: none; border-bottom: solid 1px #ddd; padding: 5px; display: block;" />
   <script>
     const url = new URL(window.location.href.replace("#", "?"))
     const yandexToken = url.searchParams.get("access_token")
-    document.querySelector("#token").textContent = yandexToken;
+    document.querySelector("#token").value = yandexToken;
   </script>
 
 
