@@ -10,15 +10,17 @@
 </head>
 
 <body>
-  Авторизация
+
+  <h2>Скопируйте следующий токен и вставьте его в настройки</h2>
+  <div id="token" style="margin-top: 20px"></div>
   <script>
-    YaSendSuggestToken(
-      'https://sivko.github.io/yandex-metric-s2.github.io/build',
-      {
-        flag: true
-      }
-    )
+    // https://vs113.ru/workshop/yandexmetrika/yandex.html#access_token=y0_AgAEA7qj6qHpAAuXoQAAAAEEZMaRAACIOkZIPZxNPp878G7y9HCZ7AcL6w&token_type=bearer&expires_in=31498918&cid=8hwvjvy7uph3wn0ttxgcunbkew
+    const url = new URL(window.location.href.replace("#", "?"))
+    const yandexToken = x.searchParams.get("access_token")
+    document.querySelector("#token").textContent = yandexToken;
   </script>
+
+
 </body>
 
 </html>
