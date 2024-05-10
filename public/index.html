@@ -42,7 +42,10 @@
       .then(({
         handler
       }) => handler())
-      .then(data => console.log('Сообщение с токеном', data))
+      .then(data => {
+        console.log('Сообщение с токеном', data)
+        document.querySelector("#yatoken").value = data.access_token
+      })
       .catch(error => console.log('Обработка ошибки', error));
 
   </script>
