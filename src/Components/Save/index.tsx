@@ -20,9 +20,9 @@ export default function Save() {
 
       await axios.patch(`${address}/api/v1/constants/${constId}`, data, options);
       setModals((prev: []) => [...prev, (<>
-        <h1>Вcе ОК :)</h1>
+        <h1 className="text-xl font-bold">Вcе ОК :)</h1>
         <div>Теперь необходимо вызвать вебхук из контакта/компании для отработки скрипта</div>
-        <div>{`https://vs113.ru/api/v2/${constId}/${token}/${address.replace("https://","")}`}</div>
+        <div><input type="text" className="outline-none border-b w-full" value={`https://vs113.ru/api/v2/${constId}/${token}/${address.replace("https://", "")}`} /></div>
       </>)])
     } catch (err) {
       setModals((prev: []) => [...prev, (<>

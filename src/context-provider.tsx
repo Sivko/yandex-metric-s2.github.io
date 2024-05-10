@@ -43,7 +43,7 @@ export const Context = createContext<any>({
 async function init({ setAccount, setAddress, setToken, setOptions, setContactFields, setCompanyFields, setMetricId, setConstId, setYandexToken, setRules }: { setAccount: SetStateAction<any>, setAddress: SetStateAction<any>, setToken: SetStateAction<any>, setOptions: SetStateAction<any>, setContactFields: SetStateAction<any>, setCompanyFields: SetStateAction<any>, setMetricId: SetStateAction<any>, setConstId: SetStateAction<any>, setYandexToken: SetStateAction<any>, setRules: SetStateAction<any> }) {
   let addr
   if (!document.referrer) addr = "https://app.salesap.ru"
-  else if (document.referrer.includes("localhost")) addr = "https://app.salesap.ru"
+  else if (document.referrer.includes("localhost") || document.referrer.includes("192")) addr = "https://app.salesap.ru"
   else addr = document.referrer;
 
 

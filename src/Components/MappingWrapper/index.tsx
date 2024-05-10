@@ -34,7 +34,7 @@ export default function FildMapping() {
     }
 
     if (rules && rules?.companyRules?.length) {
-      rules.companiesClientID[0] &&setCompaniesClientId(rules.companiesClientID[0].clientId)
+      rules.companiesClientID[0] && setCompaniesClientId(rules.companiesClientID[0].clientId)
     }
   }, [rules])
 
@@ -75,7 +75,7 @@ export default function FildMapping() {
       newData.type = "contacts";
       if (!rules.contactRules.length) { throw new Error("Не удалось найти правила для Контактов") };
       for (let i = 0; i < rules.contactRules.length; i++) {
-        const clientId = data[rules.contactRules[i].clientId["attribute-name"]].replace(/<(.|\n)*?>/g, '');
+        const clientId = data[rules.contactRules[i].clientId["attribute-name"]].replace(/<(.|)*?>/g, '');
         if (!clientId) {throw new Error ("Не указан ClientID")}
         const dimensions = rules.contactRules[i].params.map(e => e.yandexField["attribute-name"]).join(",");
         const url = "https://api-metrika.yandex.net/stat/v1/data?ids=" + metricId + "&dimensions=" + dimensions + "&filters=ym:s:clientID=="+clientId+"&metrics=" + rules.contactRules[i].metric+"&date1="+moment(data.created_at).format("YYYY-MM-DD");
