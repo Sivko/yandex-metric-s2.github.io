@@ -87,8 +87,8 @@ async function init({ setAccount, setAddress, setToken, setOptions, setContactFi
   const customFieldsCompanies = _customFieldsCompanies.data.data.map((e: any) => ({ "attribute-name": `custom_${e.id}`, name: `${e.attributes.name}*` }))
 
 
-  setCompanyFields([...defaultCompaniesFields, ...customFieldsContacts])
-  setContactFields([...defaultContactFields, ...customFieldsCompanies])
+  setCompanyFields([...defaultCompaniesFields, ...customFieldsCompanies])
+  setContactFields([...defaultContactFields, ...customFieldsContacts])
 
   try {
     const regMetricId = /\/\*metricId\*\/(.*)\/\*endMetricId\*\//s;
