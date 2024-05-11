@@ -63,7 +63,7 @@ async function init({ setAccount, setAddress, setToken, setOptions, setContactFi
         "type": "constants",
         "attributes": {
           "name": "yandexMetrika1.0",
-          "value": "",
+          "value": "1",
           "numeric": false
         }
       }
