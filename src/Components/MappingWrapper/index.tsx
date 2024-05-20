@@ -86,10 +86,32 @@ export default function FildMapping() {
               newData.attributes.customs[rules.contactRules[i].params[x].crmField["attribute-name"]]
               } else { newData.attributes[rules.contactRules[i].params[x].crmField["attribute-name"]] = res.data.data[0].dimensions[x].name; }
           }
-          await axios.patch("${address}/"+data.id, {data: newData}, options);
+          await axios.patch("${address}/api/v1/contacts/"+data.id, {data: newData}, options);
         }
       return;
     }
+
+    if (request.type == "Company") {
+      newData.type = "companies";
+      if (!rules.companyRules.length) { throw new Error("Не удалось найти правила для Контактов") };
+      for (let i = 0; i < rules.companyRules.length; i++) {
+        const clientId = data[rules.companyRules[i].clientId["attribute-name"]].replace(/<(.|)*?>/g, '');
+        if (!clientId) {throw new Error ("Не указан ClientID")}
+        const dimensions = rules.companyRules[i].params.map(e => e.yandexField["attribute-name"]).join(",");
+        const url = "https://api-metrika.yandex.net/stat/v1/data?ids=" + metricId + "&dimensions=" + dimensions + "&filters=ym:s:clientID=="+clientId+"&metrics=" + rules.companyRules[i].metric+"&date1="+moment(data.created_at).format("YYYY-MM-DD");
+        const res = await axios.get(url, { headers: { Authorization: "OAuth " + auth0 } })
+        if (!res.data.data?.length) { throw new Error("Нет данных для записи" + JSON.stringify(res.data)) }
+          for (let x = 0; x < rules.companyRules[i].params.length; x++) {
+            if (rules.companyRules[i].params[x].crmField["attribute-name"].includes("custom")) {
+              newData.attributes.customs[rules.companyRules[i].params[x].crmField["attribute-name"]]
+              } else { newData.attributes[rules.companyRules[i].params[x].crmField["attribute-name"]] = res.data.data[0].dimensions[x].name; }
+          }
+          await axios.patch("${address}/api/v1/companies/"+data.id, {data: newData}, options);
+        }
+      return;
+    }
+
+    
   `
 
     setRusult(someCode)
