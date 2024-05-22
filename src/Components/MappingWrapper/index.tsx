@@ -27,15 +27,14 @@ export default function FildMapping() {
 
     if (rules && rules?.contactRules?.length) {
       setContactsSelectedFields([].concat.apply([], rules?.contactRules.map((e: any) => e.params)))
-      setCompaniesSelectedFields([].concat.apply([], rules?.companyRules.map((e: any) => e.params)))
-
-      console.log(rules.contactRules[0].clientId)
       setContactClientId(rules.contactRules[0].clientId)
     }
 
-    if (rules && rules?.companyRules?.length && rules.companiesClientID) {
-      rules.companiesClientID[0] && setCompaniesClientId(rules.companiesClientID[0].clientId)
+    if (rules && rules?.companyRules?.length) {
+      setCompaniesSelectedFields([].concat.apply([], rules?.companyRules.map((e: any) => e.params)))
+      setCompaniesClientId(rules.companyRules[0].clientId)
     }
+
   }, [rules])
 
   useEffect((): any => {

@@ -56,41 +56,42 @@ async function init({ setAccount, setAddress, setToken, setOptions, setContactFi
   setAddress(addr);
   setOptions(_options);
 
-  const getRules = (await axios.get(`${addr}/api/v1/constants?filter[q]=yandexMetrika1.0`, _options)).data.data[0] as ContastantRoot
-  if (!getRules) {
-    const _constantId = (await axios.post(`${addr}/api/v1/constants`, {
-      "data": {
-        "type": "constants",
-        "attributes": {
-          "name": "yandexMetrika1.0",
-          "value": "1",
-          "numeric": false
-        }
-      }
-    }, _options)).data.data.id;
-
-    console.log("Cоздал константу", _constantId)
-    setConstId(_constantId)
-    return;
-  }
-
-  console.log("Беру константу", getRules.id)
-  setConstId(getRules.id)
-
-
-
-  const _customFieldsContacts = await axios.get(`${addr}/api/v1/custom-fields?filter[field-type]=text,select&filter[resources]=contacts`, _options)
-  const customFieldsContacts = _customFieldsContacts.data.data.map((e: any) => ({ "attribute-name": `custom_${e.id}`, name: `${e.attributes.name}*` }))
-
-
-  const _customFieldsCompanies = await axios.get(`${addr}/api/v1/custom-fields?filter[field-type]=text,select&filter[resources]=companies`, _options)
-  const customFieldsCompanies = _customFieldsCompanies.data.data.map((e: any) => ({ "attribute-name": `custom_${e.id}`, name: `${e.attributes.name}*` }))
-
-
-  setCompanyFields([...defaultCompaniesFields, ...customFieldsCompanies])
-  setContactFields([...defaultContactFields, ...customFieldsContacts])
-
   try {
+
+    const getRules = (await axios.get(`${addr}/api/v1/constants?filter[q]=yandexMetrika1.0`, _options)).data.data[0] as ContastantRoot
+    if (!getRules) {
+      const _constantId = (await axios.post(`${addr}/api/v1/constants`, {
+        "data": {
+          "type": "constants",
+          "attributes": {
+            "name": "yandexMetrika1.0",
+            "value": "1",
+            "numeric": false
+          }
+        }
+      }, _options)).data.data.id;
+
+      console.log("Cоздал константу", _constantId)
+      setConstId(_constantId)
+      return;
+    }
+
+    console.log("Беру константу", getRules.id)
+    setConstId(getRules.id)
+
+
+
+    const _customFieldsContacts = await axios.get(`${addr}/api/v1/custom-fields?filter[field-type]=text,select&filter[resources]=contacts`, _options)
+    const customFieldsContacts = _customFieldsContacts.data.data.map((e: any) => ({ "attribute-name": `custom_${e.id}`, name: `${e.attributes.name}*` }))
+
+
+    const _customFieldsCompanies = await axios.get(`${addr}/api/v1/custom-fields?filter[field-type]=text,select&filter[resources]=companies`, _options)
+    const customFieldsCompanies = _customFieldsCompanies.data.data.map((e: any) => ({ "attribute-name": `custom_${e.id}`, name: `${e.attributes.name}*` }))
+
+
+    setContactFields([...defaultContactFields, ...customFieldsContacts])
+    setCompanyFields([...defaultCompaniesFields, ...customFieldsCompanies])
+  
     const regMetricId = /\/\*metricId\*\/(.*)\/\*endMetricId\*\//s;
     const regYandexToken = /\/\*auth0\*\/(.*)\/\*endAuth0\*\//s;
     const regRules = /\/\*rules\*\/(.*)\/\*endRules\*\//s;
