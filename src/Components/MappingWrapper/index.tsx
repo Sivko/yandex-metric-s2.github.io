@@ -33,7 +33,7 @@ export default function FildMapping() {
       setContactClientId(rules.contactRules[0].clientId)
     }
 
-    if (rules && rules?.companyRules?.length) {
+    if (rules && rules?.companyRules?.length && rules.companiesClientID) {
       rules.companiesClientID[0] && setCompaniesClientId(rules.companiesClientID[0].clientId)
     }
   }, [rules])
