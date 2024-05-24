@@ -83,7 +83,7 @@ export default function FildMapping() {
         if (!res.data.data?.length) { throw new Error("Нет данных для записи" + JSON.stringify(res.data)) }
           for (let x = 0; x < rules.contactRules[i].params.length; x++) {
             if (rules.contactRules[i].params[x].crmField["attribute-name"].includes("custom")) {
-              newData.attributes.customs[rules.contactRules[i].params[x].crmField["attribute-name"]]
+              newData.attributes.customs[rules.contactRules[i].params[x].crmField["attribute-name"]] = res.data.data[0].dimensions[x].name;
               } else { newData.attributes[rules.contactRules[i].params[x].crmField["attribute-name"]] = res.data.data[0].dimensions[x].name; }
           }
           await axios.patch("${address}/api/v1/contacts/"+data.id, {data: newData}, options);
@@ -104,7 +104,7 @@ export default function FildMapping() {
         if (!res.data.data?.length) { throw new Error("Нет данных для записи" + JSON.stringify(res.data)) }
           for (let x = 0; x < rules.companyRules[i].params.length; x++) {
             if (rules.companyRules[i].params[x].crmField["attribute-name"].includes("custom")) {
-              newData.attributes.customs[rules.companyRules[i].params[x].crmField["attribute-name"]]
+              newData.attributes.customs[rules.companyRules[i].params[x].crmField["attribute-name"]]= res.data.data[0].dimensions[x].name;
               } else { newData.attributes[rules.companyRules[i].params[x].crmField["attribute-name"]] = res.data.data[0].dimensions[x].name; }
           }
           await axios.patch("${address}/api/v1/companies/"+data.id, {data: newData}, options);
