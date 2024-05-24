@@ -78,7 +78,7 @@ export default function FildMapping() {
         const clientId = data[rules.contactRules[i].clientId["attribute-name"]].replace(/<(.|)*?>/g, '');
         if (!clientId) {throw new Error ("Не указан ClientID")}
         const dimensions = rules.contactRules[i].params.map(e => e.yandexField["attribute-name"]).join(",");
-        const url = "https://api-metrika.yandex.net/stat/v1/data?ids=" + metricId + "&dimensions=" + dimensions + "&filters=ym:s:clientID=="+clientId+"&metrics=" + rules.contactRules[i].metric+"&date1="+moment(data.created_at).format("YYYY-MM-DD");
+        const url = "https://api-metrika.yandex.net/stat/v1/data?ids=" + metricId + "&dimensions=" + dimensions + "&filters=ym:s:clientID=="+clientId+"&metrics=" + rules.contactRules[i].metric+"&date1="+moment(data.created_at, "DD.MM.YYYY hh:mm:ss").format("YYYY-MM-DD");
         const res = await axios.get(url, { headers: { Authorization: "OAuth " + auth0 } })
         if (!res.data.data?.length) { throw new Error("Нет данных для записи" + JSON.stringify(res.data)) }
           for (let x = 0; x < rules.contactRules[i].params.length; x++) {
@@ -99,7 +99,7 @@ export default function FildMapping() {
         const clientId = data[rules.companyRules[i].clientId["attribute-name"]].replace(/<(.|)*?>/g, '');
         if (!clientId) {throw new Error ("Не указан ClientID")}
         const dimensions = rules.companyRules[i].params.map(e => e.yandexField["attribute-name"]).join(",");
-        const url = "https://api-metrika.yandex.net/stat/v1/data?ids=" + metricId + "&dimensions=" + dimensions + "&filters=ym:s:clientID=="+clientId+"&metrics=" + rules.companyRules[i].metric+"&date1="+moment(data.created_at).format("YYYY-MM-DD");
+        const url = "https://api-metrika.yandex.net/stat/v1/data?ids=" + metricId + "&dimensions=" + dimensions + "&filters=ym:s:clientID=="+clientId+"&metrics=" + rules.companyRules[i].metric+"&date1="+moment(data.created_at, "DD.MM.YYYY hh:mm:ss").format("YYYY-MM-DD");
         const res = await axios.get(url, { headers: { Authorization: "OAuth " + auth0 } })
         if (!res.data.data?.length) { throw new Error("Нет данных для записи" + JSON.stringify(res.data)) }
           for (let x = 0; x < rules.companyRules[i].params.length; x++) {
