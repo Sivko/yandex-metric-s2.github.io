@@ -9,7 +9,7 @@ const metrics = ["ym:s:visits", "ym:pv:pageviews", "ym:ad:visits", "ym:up:params
 
 
 export default function FildMapping() {
-
+  // test
   const { contactFields, companyFields, yandexToken, metricId, address, rules, setRules, contactClientID, setContactClientId, companiesClientID, setCompaniesClientId, result, setRusult } = useContext(Context);
 
   interface Fields {
