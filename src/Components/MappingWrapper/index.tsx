@@ -74,6 +74,7 @@ export default function FildMapping() {
       newData.type = "contacts";
       if (!rules.contactRules.length) { throw new Error("Не удалось найти правила для Контактов") };
       for (let i = 0; i < rules.contactRules.length; i++) {
+        if (!data[rules.contactRules[i].clientId["attribute-name"]]) throw new Error("Поле" + rules.contactRules[i].clientId["attribute-name"] + " не найдено")
         const clientId = data[rules.contactRules[i].clientId["attribute-name"]].replace(/<(.|)*?>/g, '');
         if (!clientId) {throw new Error ("Не указан ClientID")}
         const dimensions = rules.contactRules[i].params.map(e => e.yandexField["attribute-name"]).join(",");
@@ -94,6 +95,7 @@ export default function FildMapping() {
       newData.type = "companies";
       if (!rules.companyRules.length) { throw new Error("Не удалось найти правила для Контактов") };
       for (let i = 0; i < rules.companyRules.length; i++) {
+        if (!data[rules.companyRules[i].clientId["attribute-name"]]) throw new Error("Поле" + rules.companyRules[i].clientId["attribute-name"] + " не найдено")
         const clientId = data[rules.companyRules[i].clientId["attribute-name"]].replace(/<(.|)*?>/g, '');
         if (!clientId) {throw new Error ("Не указан ClientID")}
         const dimensions = rules.companyRules[i].params.map(e => e.yandexField["attribute-name"]).join(",");
